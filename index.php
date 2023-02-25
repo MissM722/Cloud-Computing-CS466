@@ -50,7 +50,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td> <input type="number" name="OL_I_ID" /> </td>
+                    <td> <input type="number" name="OL_I_ID" /> </td> 
                     <td> <input type="number" name="OL_SUPPLY_W_ID" /> </td>
                     <td> <input type="number" name="OL_QUANTITY" /> </td>
                 </tr>
