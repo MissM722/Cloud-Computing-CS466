@@ -1,0 +1,31 @@
+h1{
+    text-align: center;
+}
+
+#info{
+    text-align: center;
+}
+
+#tbl_id{
+    border: 1px solid;
+    text-align: left;
+}
+
+th{
+    background-color: aquamarine;
+}
+
+#tbl_id tr:nth-child(even){
+    background-color: aqua;
+}
+
+#tbl_id tr:hover {
+    background-color: #ddd;
+}
+
+[name=OL_I_ID]{
+    width: 50%;
+    background-color: aqua;
+    border-bottom: 2px solid black;
+}
+
