@@ -12,19 +12,16 @@ h1{
 }
 
 th{
-    background-color: aquamarine;
-}
-
-#tbl_id tr:nth-child(even){
-    background-color: aqua;
+    background-color: orange;
 }
 
 #tbl_id tr:hover {
-    background-color: #ddd;
+    background-color: black;
 }
 
-[name=OL_I_ID]{
-    background-color: aqua;
-    border-bottom: 2px solid black;
-}
+.error {
+    box-shadow: 0 0 5px #FF5252;
+    border-color: #FF1744;
+ }
+
 

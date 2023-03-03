@@ -3,6 +3,7 @@
 <head>
 
     <script src="scripts.js"> </script>
+    <link rel="stylesheet" href="normalize.css">
     <link rel="stylesheet" href="styles.css">
 
 </head>
@@ -17,17 +18,17 @@
     ?>
 
 
-    <form action="result_page.php">
+    <form action="result_page.php" id="mainForm">
 
         <div id="info"> 
             <label> Warehouse Number:</label> 
-            <input type="number" name="W_ID"> <br>
+            <input type="number" name="W_ID" class="required hilightable"> <br>
 
             <label> District Number:</label> 
-            <input type="number" name="D_ID"> <br>
+            <input type="number" name="D_ID" class="required hilightable"> <br>
 
             <label> Customer Number:</label> 
-            <input type="number" name="C_ID"> <br>
+            <input type="number" name="C_ID" class="required hilightable"> <br>
         </div>
 
         <!--
@@ -50,33 +51,33 @@
             </thead>
             <tbody>
                 <tr>
-                    <td> <input type="number" name="OL_I_ID" /> </td> 
-                    <td> <input type="number" name="OL_SUPPLY_W_ID" /> </td>
-                    <td> <input type="number" name="OL_QUANTITY" /> </td>
+                    <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td> 
+                    <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
+                    <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
                 </tr>
 
                 <tr>
-                    <td> <input type="number" name="OL_I_ID" /> </td>
-                    <td> <input type="number" name="OL_SUPPLY_W_ID" /> </td>
-                    <td> <input type="number" name="OL_QUANTITY" /> </td>
+                    <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td>
+                    <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
+                    <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
                 </tr>
 
                 <tr>
-                    <td> <input type="number" name="OL_I_ID" /> </td>
-                    <td> <input type="number" name="OL_SUPPLY_W_ID" /> </td>
-                    <td> <input type="number" name="OL_QUANTITY" /> </td>
+                    <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td>
+                    <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
+                    <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
                 </tr>
 
                 <tr>
-                    <td> <input type="number" name="OL_I_ID" /> </td>
-                    <td> <input type="number" name="OL_SUPPLY_W_ID" /> </td>
-                    <td> <input type="number" name="OL_QUANTITY" /> </td>
+                    <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td>
+                    <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
+                    <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
                 </tr>
 
                 <tr>
-                    <td> <input type="number" name="OL_I_ID" /> </td>
-                    <td> <input type="number" name="OL_SUPPLY_W_ID" /> </td>
-                    <td> <input type="number" name="OL_QUANTITY" /> </td>
+                    <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td>
+                    <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
+                    <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
                 </tr>
 
             </tbody>
@@ -97,7 +98,7 @@
 
     <?php
     //close the connection
-    $mysqli->close();
+    //$mysqli->close();
     ?>
 
 </body>

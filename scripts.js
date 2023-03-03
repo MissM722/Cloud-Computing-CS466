@@ -51,3 +51,35 @@ function deleteRow(tableID) {
         alert(e);
     }
 }
+
+function getFocus(e) {
+    if (e.type == "focus") {
+        e.target.classList.add('highlight');
+    }
+    else if (e.type == "blur") {
+        e.target.classList.remove('highlight');
+    }
+}
+
+window.addEventListener("load", function () {
+    var fields = document.querySelectorAll('.hilightable');
+    for (i = 0; i < fields.length; i++) {
+        fields[i].addEventListener("focus", getFocus);
+        fields[i].addEventListener("blur", getFocus);
+    }
+
+    document.getElementById("mainForm").addEventListener('submit', function(e){
+        var requiredThings = document.querySelectorAll('.required');
+        for(thing of requiredThings){
+            const text = thing.value;
+            if (text == ""){
+                e.preventDefault();
+                thing.classList.add('error');
+            }
+            else{
+                thing.classList.remove('error');
+            }
+        }
+    })
+
+})
