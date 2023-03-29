@@ -31,14 +31,6 @@
             <input type="number" name="C_ID" class="required hilightable"> <br>
         </div>
 
-        <!--
-        <label> Supplying Warehouse Number:</label>
-        <input type="number" name="OL_SUPPLY_W_ID">
-
-        <label> Quantity:</label>
-        <input type="number" name="OL_QUANTITY"> <br> <br>
-    -->
-
         <br>
 
         <table id="tbl_id">
