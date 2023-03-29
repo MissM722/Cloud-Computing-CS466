@@ -1,3 +1,11 @@
+*{
+    padding: 2px;
+}
+
+body{
+    overflow-y: hidden;
+}
+
 h1{
     text-align: center;
 }
@@ -20,8 +28,24 @@ th{
 }
 
 .error {
-    box-shadow: 0 0 5px #FF5252;
     border-color: #FF1744;
  }
+
+#tableButtons{
+    display: flex;
+    justify-content: center;
+    padding-top: 15px;
+ }
+
+ #tableDiv{
+    display: flex;
+    justify-content: center;
+ }
+
+ #submitButton{
+    display: flex;
+    justify-content: center;
+ }
+
 
 
