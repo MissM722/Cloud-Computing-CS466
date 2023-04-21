@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -13,7 +14,7 @@
 
     <?php
 
-    //include "db_connection.php";
+    include "db_connection.php";
 
     ?>
 
@@ -96,6 +97,7 @@
 
 
     <?php
+
     //close the connection
     //$mysqli->close();
     ?>
