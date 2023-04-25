@@ -54,33 +54,33 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td> 
-                        <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
-                        <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_I_ID1" id="bottom_form" class="required hilightable" /> </td> 
+                        <td> <input type="number" name="OL_SUPPLY_W_ID1" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_QUANTITY1" id="bottom_form" class="required hilightable" /> </td>
                     </tr>
 
                     <tr>
-                        <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td>
-                        <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
-                        <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_I_ID2" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_SUPPLY_W_ID2" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_QUANTITY2" id="bottom_form" class="required hilightable" /> </td>
                     </tr>
 
                     <tr>
-                        <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td>
-                        <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
-                        <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_I_ID3" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_SUPPLY_W_ID3" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_QUANTITY3" id="bottom_form" class="required hilightable" /> </td>
                     </tr>
 
                     <tr>
-                        <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td>
-                        <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
-                        <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_I_ID4" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_SUPPLY_W_ID4" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_QUANTITY4" id="bottom_form" class="required hilightable" /> </td>
                     </tr>
 
                     <tr>
-                        <td> <input type="number" name="OL_I_ID" id="bottom_form" class="required hilightable" /> </td>
-                        <td> <input type="number" name="OL_SUPPLY_W_ID" id="bottom_form" class="required hilightable" /> </td>
-                        <td> <input type="number" name="OL_QUANTITY" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_I_ID5" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_SUPPLY_W_ID5" id="bottom_form" class="required hilightable" /> </td>
+                        <td> <input type="number" name="OL_QUANTITY5" id="bottom_form" class="required hilightable" /> </td>
                     </tr>
 
                 </tbody>
