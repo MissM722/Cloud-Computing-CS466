@@ -10,6 +10,10 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Results</title>
+
+      <link rel="stylesheet" href="normalize.css">
+      <link rel="stylesheet" href="styles.css">
+
    </head>
    <body>
       <h1> New Order Results </h1>
@@ -55,5 +59,8 @@
             </tr>
          </tbody>
       </table>
+
+      <a href="index.php">Return to homepage</a>
+      
    </body>
 </html>

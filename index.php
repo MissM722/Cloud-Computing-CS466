@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="normalize.css">
     <link rel="stylesheet" href="styles.css">
 
+    <title>New Order Page</title>
+
+
 </head>
 
 <body>
