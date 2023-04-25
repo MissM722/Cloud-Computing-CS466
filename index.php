@@ -19,7 +19,7 @@
     ?>
 
 
-    <form action="result_page.php" id="mainForm">
+    <form action="result_page.php" id="mainForm" method="post">
 
         <div id="info"> 
             <label> Warehouse Number:</label> 
