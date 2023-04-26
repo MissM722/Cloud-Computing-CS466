@@ -17,17 +17,17 @@ function addRow() {
 
     var element0 = document.createElement("input"); //creates an HTML element to be put into the cell for the ID
     element0.type = "number"; //defines type of input
-    element0.name = "OL_I_ID"; // sets the name to OL_I_ID used for database variables
+    element0.name = "OL_I_ID" + rowCount; // sets the name to OL_I_ID used for database variables
     cell0.appendChild(element0); //adds it to the cell of the table 
 
     var element1 = document.createElement("input"); //creates an HTML element to be put into the cell for the Warehouse Number
     element1.type = "number"; //defines type of input
-    element1.name = "OL_SUPPLY_W_ID"; // sets the name to OL_SUPPLY_W_ID used for database variables
+    element1.name = "OL_SUPPLY_W_ID" + rowCount; // sets the name to OL_SUPPLY_W_ID used for database variables
     cell1.appendChild(element1); //adds it to the cell of the table 
 
     var element2 = document.createElement("input"); //creates an HTML element to be put into the cell for the Quantity
     element2.type = "number"; //defines type of input
-    element2.name = "OL_QUANTITY"; // sets the name to OL_QUANTITY used for database variables
+    element2.name = "OL_QUANTITY" + rowCount; // sets the name to OL_QUANTITY used for database variables
     cell2.appendChild(element2); //adds it to the cell of the table 
 
     if(rowCount == 15){ //if the row count is equal to 15 we can't add anymore rows because that is the max number of rows
