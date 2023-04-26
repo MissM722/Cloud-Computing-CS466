@@ -1,6 +1,15 @@
 <?php
    include "db_connection.php";
 
+  //add items into db here
+
+
+
+
+
+  //then display with html & php below
+
+
 ?>
 
 
@@ -10,11 +19,9 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="resultStyles.css">
-      <title>Results</title>
-
       <link rel="stylesheet" href="normalize.css">
       <link rel="stylesheet" href="styles.css">
-
+      <title>Results</title>
    </head>
    <body>
       <h1> New Order Results </h1>
@@ -28,12 +35,12 @@
                <td colspan="2"> New Order </td>
             </tr>
             <tr>
-               <td> Warehouse: </td>
-               <td> District: </td>
+               <td> Warehouse: <?php echo $_POST['W_ID'] ?> </td>
+               <td> District: <?php echo $_POST['D_ID'] ?> </td>
                <td colspan="2"> Date: </td>
             </tr>
             <tr>
-               <td> Customer: </td>
+               <td> Customer: <?php echo $_POST['C_ID'] ?> </td>
                <td> Name: </td>
                <td> Credit: </td>
                <td> Disc: </td>
@@ -93,6 +100,27 @@
          </tbody>
       </table>
 
+      <h1>Testing POST data:</h1>
+      <?php //print_r($_POST); 
+      foreach ($_POST as $key => $value) {
+        echo $key . " = " . $value;
+        echo "<br>";
+      }  
+
+
+      ?>
+
+      <h2>Testing SQL queries</h2>
+      <?php 
+
+      $test = "SELECT * FROM item WHERE I_ID = 100"; //selects a item with number 100
+      $result = mysqli_query($mysqli, $test);
+      echo print_r($result);
+
+      ?>
+
+      <hr>
+      
       <a href="index.php">Return to homepage</a>
       
    </body>
