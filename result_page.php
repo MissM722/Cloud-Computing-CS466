@@ -3,7 +3,15 @@
 
   //add items into db here
 
+   //need to add O_ID and O_ENTRY_D
+  $dID = $_POST['D_ID'];
+  $wID = $_POST['W_ID'];
+  $cID = $_POST['C_ID'];
+  $oID = 10050;
 
+
+  $sql = "INSERT INTO orderr (O_ID, O_D_ID, O_W_ID, O_C_ID)
+  VALUES ($oID, $dID, $wID, $cID)";
 
 
 
@@ -25,7 +33,6 @@
    </head>
    <body>
       <h1> New Order Results </h1>
-
 
       <table id="top_table">
          <tbody>
@@ -113,14 +120,14 @@
       <h2>Testing SQL queries</h2>
       <?php 
 
-      $test = "SELECT * FROM item WHERE I_ID = 100"; //selects a item with number 100
+      $test = "SELECT * FROM orderr WHERE O_ID = 10050"; //selects order number 10050
       $result = mysqli_query($mysqli, $test);
       echo print_r($result);
 
       ?>
 
       <hr>
-      
+
       <a href="index.php">Return to homepage</a>
       
    </body>
