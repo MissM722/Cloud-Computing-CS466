@@ -3,17 +3,22 @@
 
   //add items into db here
 
-   //need to add O_ID and O_ENTRY_D
+  /*Code block below is not needed. We do not need to add districts, warehouses, or customers. Leaving it for now for reference 
   $dID = $_POST['D_ID'];
   $wID = $_POST['W_ID'];
   $cID = $_POST['C_ID'];
-  $oID = 10050;
+  $sql = "INSERT INTO orderr (O_D_ID, O_W_ID, O_C_ID)
+  VALUES ($dID, $wID, $cID)"; */
 
 
-  $sql = "INSERT INTO orderr (O_ID, O_D_ID, O_W_ID, O_C_ID)
-  VALUES ($oID, $dID, $wID, $cID)";
+  $cID = $_POST['C_ID'];
+  $customerNameSQL = "SELECT C_LAST FROM customer WHERE C_ID=$cID";
+  $result = $mysqli->query($customerNameSQL);
 
-
+  $wID = $_POST['W_ID'];
+  $warehourseSQL = "SELECT O_W_ID FROM orderr WHERE O_W_ID=$wID";
+  $warehouseResult = mysqli_query($mysqli, $warehourseSQL);
+  
 
   //then display with html & php below
 
@@ -42,13 +47,14 @@
                <td colspan="2"> New Order </td>
             </tr>
             <tr>
-               <td> Warehouse: <?php echo $_POST['W_ID'] ?> </td>
-               <td> District: <?php echo $_POST['D_ID'] ?> </td>
+               <td> Warehouse: 
+                 <?php echo print_r($warehouseResult); ?> </td>
+               <td> District: </td>
                <td colspan="2"> Date: </td>
             </tr>
             <tr>
-               <td> Customer: <?php echo $_POST['C_ID'] ?> </td>
-               <td> Name: </td>
+               <td> Customer: </td>
+               <td> Name: <?php echo print_r($result); ?> </td>
                <td> Credit: </td>
                <td> Disc: </td>
             </tr>
@@ -123,6 +129,13 @@
       $test = "SELECT * FROM orderr WHERE O_ID = 10050"; //selects order number 10050
       $result = mysqli_query($mysqli, $test);
       echo print_r($result);
+
+     // cant print result directly since it returns an object
+     // saw this example for printing a query result with multiple rows
+     // trying to get it to work for one row and one column                
+     // while ($row = $warehouseResult->fetch_assoc()) {
+     //   echo $row['O_W_ID'];
+     // }
 
       ?>
 
