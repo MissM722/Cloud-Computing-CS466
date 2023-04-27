@@ -13,7 +13,7 @@
 
   $cID = $_POST['C_ID'];
   $customerNameSQL = "SELECT C_LAST FROM customer WHERE C_ID=$cID";
-  $result = $mysqli->query($customerNameSQL);
+  $customerNameResult = mysqli_query($mysqli, $customerNameSQL);
 
   $wID = $_POST['W_ID'];
   $warehourseSQL = "SELECT O_W_ID FROM orderr WHERE O_W_ID=$wID";
@@ -54,7 +54,7 @@
             </tr>
             <tr>
                <td> Customer: </td>
-               <td> Name: <?php echo print_r($result); ?> </td>
+               <td> Name: <?php echo print_r($customerNameResult); ?> </td>
                <td> Credit: </td>
                <td> Disc: </td>
             </tr>
