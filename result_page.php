@@ -1,28 +1,40 @@
 <?php
-   include "db_connection.php";
+   
+  include "db_connection.php";
 
-  //add items into db here
-
-  /*Code block below is not needed. We do not need to add districts, warehouses, or customers. Leaving it for now for reference 
+  //Store the warehouse, district, and customer data from the order form
   $dID = $_POST['D_ID'];
   $wID = $_POST['W_ID'];
   $cID = $_POST['C_ID'];
-  $sql = "INSERT INTO orderr (O_D_ID, O_W_ID, O_C_ID)
-  VALUES ($dID, $wID, $cID)"; */
+  //There is also the orders item information - OL_I_ID#, OL_SUPPLY_W_ID#, OL_QUANTITY#
+
+  //Get the current date to use for the order information
+  $tm = time();
+
+  //Query and results to use for the warehouse information
+  $warehouseSQL = "SELECT * FROM warehouse WHERE W_ID = $wID";
+  $warehouseResult = mysqli_query($mysqli, $warehouseSQL);
+  $warehouseRow = mysqli_fetch_assoc($warehouseResult) or die("Warehouse doesnt exist"); //Validate warehouse ID exists
+
+  //Query and results to use for the district information
+  $districtSQL = "SELECT * FROM district WHERE D_ID = $dID";
+  $districtResult = mysqli_query($mysqli, $districtSQL); 
+  $districtRow = mysqli_fetch_assoc($districtResult) or die("District doesnt exist"); //Validate district ID exists
+
+  //Query and results to use for the customer information
+  $customerSQL = "SELECT * FROM customer WHERE C_ID = $cID";
+  $customerResult = mysqli_query($mysqli, $customerSQL);
+  $customerRow = mysqli_fetch_assoc($customerResult) or die("Customer doesnt exist"); //Validate customer ID exists
 
 
-  $cID = $_POST['C_ID'];
-  $customerNameSQL = "SELECT C_LAST FROM customer WHERE C_ID=$cID";
-  $customerNameResult = mysqli_query($mysqli, $customerNameSQL);
+  //First add the new order into the orderr table. Entry date will have to be generated.
+  //O_ID  O_D_ID   O_W_ID   O_C_ID   O_ENTRY_D   O_CARRIER_ID   O_OL_CNT O_ALL_LOCAL
+  //how?  index    index    index    generate    sql query      how?     how?             
 
-  $wID = $_POST['W_ID'];
-  $warehourseSQL = "SELECT O_W_ID FROM orderr WHERE O_W_ID=$wID";
-  $warehouseResult = mysqli_query($mysqli, $warehourseSQL);
-  
+  //Stock will have to be updated for each item
+
 
   //then display with html & php below
-
-
 ?>
 
 
@@ -48,21 +60,22 @@
             </tr>
             <tr>
                <td> Warehouse: 
-                 <?php echo print_r($warehouseResult); ?> </td>
-               <td> District: </td>
-               <td colspan="2"> Date: </td>
+                  <?php echo "{$warehouseRow['W_ID']}"; //do we need 0001/0002 or is 1/2 okay? ?>  
+               </td> 
+               <td> District: <?php echo "{$districtRow['D_ID']}"; ?> </td>
+               <td colspan="2"> Date: <?php echo date("m-d-Y H:i:s", $tm); ?> </td>
             </tr>
             <tr>
-               <td> Customer: </td>
-               <td> Name: <?php echo print_r($customerNameResult); ?> </td>
-               <td> Credit: </td>
-               <td> Disc: </td>
+               <td> Customer: <?php echo "{$customerRow['C_ID']}"; ?> </td>
+               <td> Name: <?php echo "{$customerRow['C_FIRST']}" . " " . "{$customerRow['C_LAST']}"; ?> </td>
+               <td> Credit: <?php echo "{$customerRow['C_CREDIT']}" ?> </td>
+               <td> Disc: <?php echo "{$customerRow['C_DISCOUNT']}" ?> </td>
             </tr>
             <tr>
                <td> Order Number: </td>
                <td> Number of lines: </td>
-               <td> W_tax: </td>
-               <td> D_txt: </td>
+               <td> W_tax: <?php echo "{$warehouseRow['W_TAX']}"; ?> </td>
+               <td> D_txt: <?php echo "{$districtRow['D_TAX']}"; ?> </td>
             </tr>
          </tbody>
       </table>
@@ -112,32 +125,6 @@
             </tr>
          </tbody>
       </table>
-
-      <h1>Testing POST data:</h1>
-      <?php //print_r($_POST); 
-      foreach ($_POST as $key => $value) {
-        echo $key . " = " . $value;
-        echo "<br>";
-      }  
-
-
-      ?>
-
-      <h2>Testing SQL queries</h2>
-      <?php 
-
-      $test = "SELECT * FROM orderr WHERE O_ID = 10050"; //selects order number 10050
-      $result = mysqli_query($mysqli, $test);
-      echo print_r($result);
-
-     // cant print result directly since it returns an object
-     // saw this example for printing a query result with multiple rows
-     // trying to get it to work for one row and one column                
-     // while ($row = $warehouseResult->fetch_assoc()) {
-     //   echo $row['O_W_ID'];
-     // }
-
-      ?>
 
       <hr>
 
