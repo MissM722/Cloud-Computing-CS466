@@ -6,6 +6,7 @@
 
  //Get the current date to use for the order information
  $tm = time();
+ $milliseconds = gettimeofday(true) * 1000;
  $passed = true; //did anything fail?
  $total = 0.00; //total so far of cost
  $local = 0; // is the order local?
@@ -102,44 +103,37 @@ date_default_timezone_set('America/Chicago');
       $UPDATERytd = mysqli_query($mysqli,$STOCKUPDATEytd);
       $STOCKUPDATEoc = "UPDATE STOCK SET S_ORDER_CNT = S_ORDER_CNT + 1 WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//ADD TO THE YTD untested
       $UPDATERoc = mysqli_query($mysqli,$STOCKUPDATEoc );
-      if($array['OL_SUPPLY_W'.$x] != $wID){//not from same warehouse
+      if($array['OL_SUPPLY_W_ID'.$x] != $wID){//not from same warehouse
          $STOCKUPDATEoc = "UPDATE STOCK SET S_REMOTE_CNT = S_REMOTE_CNT + 1 WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//ADD TO THE REMOTE COUNT
          $UPDATERoc = mysqli_query($mysqli,$STOCKUPDATEoc );
       }
       if(str_contains($data,"ORIGINAL") && str_contains($stockd,"ORIGINAL")){
-         $ITEMDATA = "UPDATE item SET I_DATA = 'B' " ;//change the brand generic data think it's the item data???
+         $ITEMDATA = "UPDATE item SET I_DATA = 'B' WHERE I_ID =".$array['OL_I_ID'.$x] ;//change the brand generic data think it's the item data???
          $UPDATEIDATA = mysqli_query($mysqli, $ITEMDATA );
       }else{
-         $ITEMDATA = "UPDATE item SET I_DATA = 'G' " ;//change the brand generic data think it's the item data???
+         $ITEMDATA = "UPDATE item SET I_DATA = 'G'  WHERE I_ID =".$array['OL_I_ID'.$x]  ;//change the brand generic data think it's the item data???
          $UPDATEIDATA = mysqli_query($mysqli, $ITEMDATA );
          
       }
       $OLAMOUNT = $array['OL_QUANTITY'.$x] * $price; //oderline total
       $total = $total + $OLAMOUNT; //increase total variable for later 
       $ORDERLINESQL = "INSERT INTO ORDER_LINE 
-      OL_O_ID	OL_D_ID	OL_W_ID	OL_NUMBER	OL_I_ID	OL_SUPPLY_W_ID	OL_DELIVERY_D	OL_QUANTITY	OL_AMOUNT	OL_DIST_INFO)	
-      VALUES ($D_NEXT_O_ID,$dID,	$wID,$x,".$array['OL_I_ID'.$x].",".$array['OL_SUPPLY_W'.$x].",NULL,".$array['OL_QUANTITY'.$x].",".$OL_AMOUNT.",".$stockdt.")";
+      (OL_O_ID,OL_D_ID,OL_W_ID,OL_NUMBER,OL_I_ID,OL_SUPPLY_W_ID,OL_DELIVERY_D,OL_QUANTITY,OL_AMOUNT,OL_DIST_INFO)	
+      VALUES ($D_NEXT_O_ID,$dID,	$wID,$x,".$array['OL_I_ID'.$x].",".$array['OL_SUPPLY_W_ID'.$x].",NULL,".$array['OL_QUANTITY'.$x].",".$OLAMOUNT.","."'$stockdt'".")";
       $ORDDERLINE = mysqli_query($mysqli,$ORDERLINESQL ); //INSERT ORDERLINE INTO ORDER LINE TABLE
-
-      // OL_I_ID1
-      // OL_SUPPLY_W_ID1
-      // OL_QUANTITY1
-
    }
     //use this $D_NEXT_O_ID to show the order table query
-   //TOTAL 
-   $total = $total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']);
-   $endtime = time();
+   $total = round($total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']),2);
+   $endtime = gettimeofday(true) * 1000;
    $totaltime = $endtime-$tm;
-   echo($passed);
-
    //check if passed if it did display all info
    //else rollback the data and just display top
 
 
   //Stock will have to be updated for each item
 
-
+   $tablequery = "SELECT * FROM ORDER_LINE WHERE OL_O_ID = $D_NEXT_O_ID ";
+   $table = mysqli_query($mysqli,$tablequery);
   //then display with html & php below
   //answers go here
 ?>
@@ -161,13 +155,13 @@ date_default_timezone_set('America/Chicago');
       <table id="top_table">
          <tbody>
             <tr>
-               <td> - </td>
-               <td> - </td>
+               <td> Time:<?php echo "{$totaltime}"."ms"; ?> </td>
+               <td> Order Number:<?php echo "{$D_NEXT_O_ID}"; ?>  </td>
                <td colspan="2"> New Order </td>
             </tr>
             <tr>
                <td> Warehouse: 
-                  <?php echo "{$warehouseRow['W_ID']}"; //do we need 0001/0002 or is 1/2 okay? ?>  
+                  <?php echo "{$warehouseRow['W_ID']}";  ?>  
                </td> 
                <td> District: <?php echo "{$districtRow['D_ID']}"; ?> </td>
                <td colspan="2"> Date: <?php echo date("m-d-Y H:i:s", $tm); ?> </td>
@@ -186,54 +180,24 @@ date_default_timezone_set('America/Chicago');
             </tr>
          </tbody>
       </table>
-
-
-      <hr>
-
-      <table id="bottom_table">
-         <thead>
-            <tr>
-               <th>Supp_W</th>
-               <th>Item_id</th>
-               <th>Item_Name</th>
-               <th>Qty</th>
-               <th>Stock</th>
-               <th>B/G</th>
-               <th>Price</th>
-               <th>Amount</th>
-            </tr>
-         </thead>
-         <tbody>
-            <tr>
-               <td id="OL_SUPPLY_W_ID"> placeholder </td>
-               <td id="OL_I_ID"> placeholder </td>
-               <td id="I_NAME"> placeholder </td>
-               <td id="OL_QUANTITY"> placeholder </td>
-               <td id="S_QUANTITY"> placeholder </td>
-               <td> placeholder  </td>
-               <td id="I_PRICE"> placeholder </td>
-               <td id="OL_AMOUNT"> placeholder </td>
-            </tr>
-            <tr>
-               <td id="OL_SUPPLY_W_ID"> placeholder </td>
-               <td id="OL_I_ID"> placeholder </td>
-               <td id="I_NAME"> placeholder </td>
-               <td id="OL_QUANTITY"> placeholder </td>
-               <td id="S_QUANTITY"> placeholder </td>
-               <td> placeholder  </td>
-               <td id="I_PRICE"> placeholder </td>
-               <td id="OL_AMOUNT"> placeholder </td>
-            </tr>
-            <tr>
-            </tr>
-            <tr>
-            </tr>
-            <tr>
-            </tr>
-         </tbody>
-      </table>
-
-      <hr>
+<?php
+if($passed){
+echo"<table border='1'>";
+//supp_w items_id item_name qty stock b/g price amount
+$tablequery = "SELECT * FROM ORDER_LINE WHERE OL_O_ID = $D_NEXT_O_ID ";//query with all data need to show
+$table = mysqli_query($mysqli,$tablequery);
+echo"<tr><td>Supp_W</td><td>Items_id</td><td>qty</td><td>stock</td><td>b/g</td><td>Price</td><td>Amount</td><</tr>";
+ while($row = mysqli_fetch_assoc($table)){
+   echo"<tr><td>{$row['OL_W_ID']}</td><td>{$row['OL_I_ID']}</td><td>{$row['OL_QUANTITY']}</td><td>STOCKQUANTITY</td><td>ITEM B/G</td><td>ITEM PRICE</td><td>{$row['OL_AMOUNT']}</td><</tr>";
+ }
+ echo"<tr><td>Execution status succesfull!</td><td>Total: $total</tr>";
+ echo"</table>";
+}else{//if failed
+   echo"<table border='1'>";
+   echo"<tr><td>Execution status Failed Invalid ID entered!</td></tr>";
+   echo"</table>";
+}
+?>
 
       <a href="index.php">Return to homepage</a>
          <p> <?php 
