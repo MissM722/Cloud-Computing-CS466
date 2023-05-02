@@ -8,15 +8,12 @@
  $tm = time();
  $passed = true; //did anything fail?
  $total = 0.00; //total so far of cost
+ $local = 0; // is the order local?
 date_default_timezone_set('America/Chicago');
   //Store the warehouse, district, and customer data from the order form
   $dID = $_POST['D_ID'];
   $wID = $_POST['W_ID'];
   $cID = $_POST['C_ID'];
-  
-
-
-
 
   //Query and results to use for the warehouse information
   $warehouseSQL = "SELECT * FROM warehouse WHERE W_ID = $wID";
@@ -34,32 +31,51 @@ date_default_timezone_set('America/Chicago');
   $customerRow = mysqli_fetch_assoc($customerResult) or die("Customer doesnt exist"); //Validate customer ID exists
 
   //There is also the orders item information - OL_I_ID#, OL_SUPPLY_W_ID#, OL_QUANTITY#
+
   //print_r($_POST); 
+   ///fetch_assoc one
+   // fetch_all
 
-
-  //First add the new order and orderr row into tables. Entry date will have to be generated.
+   $array = $_POST;
+   $rowcount = ((sizeof($array)) - 3) /3; // subtract for 3 above then divide by 3 because each row has 3 columns
+   //go through all orderlines and check if local order or not
+    for($x =1;$x<=$rowcount;$x++){
+       if($array['OL_SUPPLY_W_ID'.$x] != $wID){
+         $local = 1;
+       }
+    }
+   //Add orderr row into tables. Entry date will have to be generated. can't do first since we can't check if local till for loop
   //O_ID  O_D_ID   O_W_ID   O_C_ID   O_ENTRY_D   O_CARRIER_ID   O_OL_CNT O_ALL_LOCAL
-  //how?  index    index    index    generate    sql query      how?     how?        
-  $O_IDq = "SELECT D_NEXT_O_ID FROM DISTRICT WHERE D_ID = $dID and D_W_ID = $wID";
+  //disrict_next_id  index    index    index    generate    sql query      row count     if all 0 or not        
+
+  //get D_NEXT_O_ID
+  $O_IDq = "SELECT D_NEXT_O_ID FROM DISTRICT WHERE D_ID = $dID and D_W_ID = $wID";//get next order number
   $O_ID = mysqli_query($mysqli, $O_IDq );
-  $cu = mysqli_fetch_assoc($O_ID);
-  echo($cu[0]);
+  $D_NEXT_O_ID = mysqli_fetch_assoc($O_ID);// get the next order number for this district and warehouse
+  $D_NEXT_O_ID = $D_NEXT_O_ID['D_NEXT_O_ID']; //set variable to it since we use it multiple times
+  $UPDATEQ = "UPDATE DISTRICT SET D_NEXT_O_ID = D_NEXT_O_ID  + 1 WHERE D_ID = $dID AND $wID =1";//INCREASE THE NEXT ID
+  $UPDATER = mysqli_query($mysqli,$UPDATEQ);
+
+  // insert into orderr
   $orderrSQL = "INSERT INTO ORDERR (O_ID,O_D_ID,O_W_ID,O_C_ID,O_ENTRY_D,O_CARRIER_ID,O_OL_CNT,O_ALL_LOCAL)	
-  )
- 
-   VALUES ('John', 'Doe', 'john@example.com')";
+  VALUES ($D_NEXT_O_ID,$dID,$wID,$cID,$tm,NULL,$rowcount,$local)";
+  $orderrR = mysqli_query($mysqli,$orderrSQL);
+
+  //insert into new order
+  $NEWOI = "INSERT INTO NEW_ORDER (NO_O_ID,NO_D_ID,NO_W_ID) VALUES($D_NEXT_O_ID,$dID,$wID)";
   
-  //go through all order lines
+  //go through all order lines and create orderline for database
   $array = $_POST;
   $rowcount = ((sizeof($array)) - 3) /3; // subtract for 3 above then divide by 3 because each row has 3 columns
-  echo($rowcount);
   //go through all orderlines
-   for($x =0;$x<=$rowcount;$x++){
+   for($x =1;$x<=$rowcount;$x++){
       // OL_I_ID1
       // OL_SUPPLY_W_ID1
       // OL_QUANTITY1
 
    }
+
+
 
   //Stock will have to be updated for each item
 
