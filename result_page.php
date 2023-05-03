@@ -1,18 +1,13 @@
 
 
 <?php
-function get_milliseconds()// to get miliseconds source: https://www.techiedelight.com/get-current-time-in-milliseconds-php/
-{
-    $chunks = explode(' ', microtime());
-    return sprintf('%d%d', $chunks[1], $chunks[0] * 1000);
-}
- 
+
    //logic goes here
   include "db_connection.php";
 
  //Get the current date to use for the order information
  $tm = time();
- $milliseconds = get_milliseconds();
+ $milliseconds = floor(microtime(true) * 1000);
  $passed = true; //did anything fail?
  $total = 0.00; //total so far of cost
  $local = 0; // is the order local?
@@ -126,7 +121,7 @@ date_default_timezone_set('America/Chicago');
 
     //use this $D_NEXT_O_ID to show the order table query
    $total = round($total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']),2);
-   $endtime = get_milliseconds();
+   $endtime =floor(microtime(true) * 1000);
    $totaltime = round($endtime - $milliseconds,2);
 
    if($passed){//if passed commit
