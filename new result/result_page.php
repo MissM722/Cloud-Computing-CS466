@@ -6,7 +6,7 @@
 
  //Get the current date to use for the order information
  $tm = time();
- $milliseconds = gettimeofday(true) * 1000;
+ $milliseconds = microtime(TRUE);
  $passed = true; //did anything fail?
  $total = 0.00; //total so far of cost
  $local = 0; // is the order local?
@@ -124,8 +124,8 @@ date_default_timezone_set('America/Chicago');
    }
     //use this $D_NEXT_O_ID to show the order table query
    $total = round($total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']),2);
-   $endtime = gettimeofday(true) * 1000;
-   $totaltime = $endtime-$tm;
+   $endtime = microtime(TRUE);
+   $totaltime = round($endtime - $milliseconds,2);
    //check if passed if it did display all info
    //else rollback the data and just display top
 
@@ -183,18 +183,21 @@ date_default_timezone_set('America/Chicago');
 <?php
 if($passed){
 echo"<table border='1'>";
-//supp_w items_id item_name qty stock b/g price amount
-$tablequery = "SELECT * FROM ORDER_LINE WHERE OL_O_ID = $D_NEXT_O_ID ";//query with all data need to show
-$table = mysqli_query($mysqli,$tablequery);
-echo"<tr><td>Supp_W</td><td>Items_id</td><td>qty</td><td>stock</td><td>b/g</td><td>Price</td><td>Amount</td><</tr>";
+//TEMP TABLE OF ALL COMBINED
+$temptable = "SELECT ORDER_LINE.OL_W_ID,ORDER_LINE.OL_I_ID,ITEM.I_NAME,ORDER_LINE.OL_QUANTITY,STOCK.S_QUANTITY,ITEM.I_DATA,ITEM.I_PRICE,ORDER_LINE.OL_AMOUNT 
+FROM((ORDER_LINE INNER JOIN ITEM ON ORDER_LINE.OL_I_ID = ITEM.I_ID) 
+INNER JOIN STOCK ON ORDER_LINE.OL_I_ID = STOCK.S_I_ID AND ORDER_LINE.OL_W_ID = STOCK.S_W_ID)
+WHERE ORDER_LINE.OL_O_ID = $D_NEXT_O_ID;";
+$table = mysqli_query($mysqli,$temptable);
+echo"<tr><td>Supp_W</td><td>Item_id</td><td>Item_Name</td><td>qty</td><td>Stock</td><td>B/G</td><td>Price</td><td>Amount</td></tr>";
  while($row = mysqli_fetch_assoc($table)){
-   echo"<tr><td>{$row['OL_W_ID']}</td><td>{$row['OL_I_ID']}</td><td>{$row['OL_QUANTITY']}</td><td>STOCKQUANTITY</td><td>ITEM B/G</td><td>ITEM PRICE</td><td>{$row['OL_AMOUNT']}</td><</tr>";
+   echo"<tr><td>{$row['OL_W_ID']}</td><td>{$row['OL_I_ID']}</td><td>{$row['I_NAME']}</td><td>{$row['OL_QUANTITY']}</td><td>{$row['S_QUANTITY']}</td><td>{$row['I_DATA']}<td>{$row['I_PRICE']}</td><td>{$row['OL_AMOUNT']}</td></tr>";
  }
  echo"<tr><td>Execution status succesfull!</td><td>Total: $total</tr>";
  echo"</table>";
 }else{//if failed
    echo"<table border='1'>";
-   echo"<tr><td>Execution status Failed Invalid ID entered!</td></tr>";
+   echo"<tr><td>Execution status Failed Invalid Item ID entered!</td></tr>";
    echo"</table>";
 }
 ?>
