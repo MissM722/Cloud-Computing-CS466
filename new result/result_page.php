@@ -31,11 +31,6 @@ date_default_timezone_set('America/Chicago');
   $customerResult = mysqli_query($mysqli, $customerSQL);
   $customerRow = mysqli_fetch_assoc($customerResult) or die("Customer doesnt exist"); //Validate customer ID exists
 
-  //There is also the orders item information - OL_I_ID#, OL_SUPPLY_W_ID#, OL_QUANTITY#
-
-  //print_r($_POST); 
-   ///fetch_assoc one
-   // fetch_all
 
    $array = $_POST;
    $rowcount = ((sizeof($array)) - 3) /3; // subtract for 3 above then divide by 3 because each row has 3 columns
@@ -46,9 +41,7 @@ date_default_timezone_set('America/Chicago');
        }
     }
    //Add orderr row into tables. Entry date will have to be generated. can't do first since we can't check if local till for loop
-  //O_ID  O_D_ID   O_W_ID   O_C_ID   O_ENTRY_D   O_CARRIER_ID   O_OL_CNT O_ALL_LOCAL
-  //disrict_next_id  index    index    index    generate    sql query      row count     if all 0 or not        
-
+   $mysqli -> autocommit(FALSE); // turn of autocommit incase failure
   //get D_NEXT_O_ID
   $O_IDq = "SELECT D_NEXT_O_ID FROM DISTRICT WHERE D_ID = $dID and D_W_ID = $wID";//get next order number
   $O_ID = mysqli_query($mysqli, $O_IDq );
@@ -74,15 +67,17 @@ date_default_timezone_set('America/Chicago');
       $I_IDq = "SELECT * FROM ITEM WHERE I_ID =".$array['OL_I_ID'.$x]; ///get next order number
       $I_ID = mysqli_query($mysqli, $I_IDq );//using OL_ID
       $I_ROW = mysqli_fetch_assoc($I_ID);//GET THE ITEM ROW
-      if($I_ID->num_rows ==0){ // if the item number isn't valid
+      if($I_ID->num_rows ==0){ // if the item number isn't valid roll back new order and order line
          $passed= false;
+         $mysqli->rollback();
          break;
+         //rollback
       }else{ // it's found
          $price = $I_ROW['I_PRICE']; //item price
          $name = $I_ROW['I_NAME']; //item name
          $data = $I_ROW['I_DATA']; //item data
       }
-      $S_IDq = "SELECT * FROM STOCK WHERE S_I_ID =".$array['OL_I_ID'.$x]." and S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x]; ///checkl stock of that item in supply warehouse it has to exixt because it passed item check already stock is full of items that exist
+      $S_IDq = "SELECT * FROM STOCK WHERE S_I_ID =".$array['OL_I_ID'.$x]." and S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x]; ///checkl stock of that item in supply warehouse it has to exist because it passed item check already stock is full of items that exist
       $S_ID = mysqli_query($mysqli, $S_IDq );//using OL_ID
       $S_ROW = mysqli_fetch_assoc($S_ID);//GET THE ITEM ROW
       $stockq = $S_ROW['S_QUANTITY']; //how many of that item are in stock
@@ -122,20 +117,16 @@ date_default_timezone_set('America/Chicago');
       VALUES ($D_NEXT_O_ID,$dID,	$wID,$x,".$array['OL_I_ID'.$x].",".$array['OL_SUPPLY_W_ID'.$x].",NULL,".$array['OL_QUANTITY'.$x].",".$OLAMOUNT.","."'$stockdt'".")";
       $ORDDERLINE = mysqli_query($mysqli,$ORDERLINESQL ); //INSERT ORDERLINE INTO ORDER LINE TABLE
    }
+
     //use this $D_NEXT_O_ID to show the order table query
    $total = round($total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']),2);
    $endtime = microtime(TRUE);
    $totaltime = round($endtime - $milliseconds,2);
-   //check if passed if it did display all info
-   //else rollback the data and just display top
 
-
-  //Stock will have to be updated for each item
-
-   $tablequery = "SELECT * FROM ORDER_LINE WHERE OL_O_ID = $D_NEXT_O_ID ";
-   $table = mysqli_query($mysqli,$tablequery);
-  //then display with html & php below
-  //answers go here
+   if($passed){//if passed commit
+      $mysqli->commit();
+      $mysqli -> autocommit(TRUE);
+   }
 ?>
 
 
