@@ -1,0 +1,5 @@
+PROJECT.sql creates all of the tables
+while everything in tables adds tables to that data
+
+dbedit.py is only used in created print querys that can go into mysql into a .txt file to be copied and pasted 
+into a mysql query to insert data to the tables.
