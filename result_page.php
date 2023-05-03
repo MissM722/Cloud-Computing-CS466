@@ -153,7 +153,7 @@ date_default_timezone_set('America/Chicago');
          <tbody>
             <tr>
                <td> Time:<?php echo "{$totaltime}"."ms"; ?> </td>
-               <td> Order Number:<?php echo "{$D_NEXT_O_ID}"; ?>  </td>
+               <td>   </td>
                <td colspan="2"> New Order </td>
             </tr>
             <tr>
@@ -170,7 +170,7 @@ date_default_timezone_set('America/Chicago');
                <td> Disc: <?php echo "{$customerRow['C_DISCOUNT']}" ?> </td>
             </tr>
             <tr>
-               <td> Order Number: </td>
+               <td> Order Number:<?php echo "{$D_NEXT_O_ID}"; ?></td>
                <td> Number of lines: <?php echo $rowcount; ?></td>
                <td> W_tax: <?php echo "{$warehouseRow['W_TAX']}"; ?> </td>
                <td> D_tax: <?php echo "{$districtRow['D_TAX']}"; ?> </td>
