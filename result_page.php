@@ -6,12 +6,12 @@
   include "db_connection.php";
 
  //Get the current date to use for the order information
- $tm = time();
- $milliseconds = floor(microtime(true) * 1000);
+ $tm = time(); //current date/time
+ $milliseconds = floor(microtime(true) * 1000); // current time for a millisecond format
  $passed = true; //did anything fail?
  $total = 0.00; //total so far of cost
  $local = 0; // is the order local?
-date_default_timezone_set('America/Chicago');
+date_default_timezone_set('America/Chicago'); //change to my timezone because I like seeing it better
   //Store the warehouse, district, and customer data from the order form
   $dID = $_POST['D_ID'];
   $wID = $_POST['W_ID'];
@@ -68,7 +68,7 @@ date_default_timezone_set('America/Chicago');
       $I_IDq = "SELECT * FROM ITEM WHERE I_ID =".$array['OL_I_ID'.$x]; ///get next order number
       $I_ID = mysqli_query($mysqli, $I_IDq );//using OL_ID
       $I_ROW = mysqli_fetch_assoc($I_ID);//GET THE ITEM ROW
-      if($I_ID->num_rows ==0){ // if the item number isn't valid roll back new order and order line
+      if($I_ID->num_rows ==0){ // if the item number isn't valid roll back all transactions done to database like nothing happened
          $passed= false;
          $mysqli->rollback();
          break;
@@ -86,32 +86,32 @@ date_default_timezone_set('America/Chicago');
       if($dID <10 ){ //not district ten we need to do this because districts don't have a 0 infront of them 
          $stockdt = $S_ROW['S_DIST_0'.$dID]; // stock district number equals this 
       }else{
-         $stockdt = $S_ROW['S_DIST_'.$dID];
+         $stockdt = $S_ROW['S_DIST_'.$dID];// just 10
       }
       if($stockq > $array['OL_QUANTITY'.$x] + 10){ // if the stockq is greater then how many being order +10
-         $STOCKUPDATEq = "UPDATE STOCK SET S_QUANTITY = S_QUANTITY - ".$array['OL_QUANTITY'.$x]." WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//REMOVE THAT MUCH FROM THAT STOCK HOPEFULLY UNTESTED
+         $STOCKUPDATEq = "UPDATE STOCK SET S_QUANTITY = S_QUANTITY - ".$array['OL_QUANTITY'.$x]." WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//REMOVE THAT MUCH FROM THAT STOCK HOPEFULLY  
          $UPDATERsq = mysqli_query($mysqli,$STOCKUPDATEq);
-      }else{
-         $STOCKUPDATEq = "UPDATE STOCK SET S_QUANTITY = (S_QUANTITY - ".$array['OL_QUANTITY'.$x].") + 91 WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//REMOVE THAT MUCH FROM THAT STOCK and then add 91 untested
+      }else{// if not subtract then add 91
+         $STOCKUPDATEq = "UPDATE STOCK SET S_QUANTITY = (S_QUANTITY - ".$array['OL_QUANTITY'.$x].") + 91 WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//REMOVE THAT MUCH FROM THAT STOCK and then add 91  
          $UPDATERsq = mysqli_query($mysqli,$STOCKUPDATEq);
       }
-      $STOCKUPDATEytd = "UPDATE STOCK SET S_YTD = (S_YTD + ".$array['OL_QUANTITY'.$x].") WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//ADD TO THE YTD untested
+      $STOCKUPDATEytd = "UPDATE STOCK SET S_YTD = (S_YTD + ".$array['OL_QUANTITY'.$x].") WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//ADD TO THE YTD  
       $UPDATERytd = mysqli_query($mysqli,$STOCKUPDATEytd);
-      $STOCKUPDATEoc = "UPDATE STOCK SET S_ORDER_CNT = S_ORDER_CNT + 1 WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//ADD TO THE YTD untested
+      $STOCKUPDATEoc = "UPDATE STOCK SET S_ORDER_CNT = S_ORDER_CNT + 1 WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//ADD TO THE YTD  
       $UPDATERoc = mysqli_query($mysqli,$STOCKUPDATEoc );
       if($array['OL_SUPPLY_W_ID'.$x] != $wID){//not from same warehouse
          $STOCKUPDATEoc = "UPDATE STOCK SET S_REMOTE_CNT = S_REMOTE_CNT + 1 WHERE ". $I_ROW['I_ID']. " = ".$S_ROW['S_I_ID']." AND S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x];//ADD TO THE REMOTE COUNT
          $UPDATERoc = mysqli_query($mysqli,$STOCKUPDATEoc );
       }
       if(str_contains($data,"ORIGINAL") && str_contains($stockd,"ORIGINAL")){
-         $ITEMDATA = "UPDATE item SET I_DATA = 'B' WHERE I_ID =".$array['OL_I_ID'.$x] ;//change the brand generic data think it's the item data???
+         $ITEMDATA = "UPDATE item SET I_DATA = 'B' WHERE I_ID =".$array['OL_I_ID'.$x] ;//change the brand generic data think it's the item data
          $UPDATEIDATA = mysqli_query($mysqli, $ITEMDATA );
       }else{
-         $ITEMDATA = "UPDATE item SET I_DATA = 'G'  WHERE I_ID =".$array['OL_I_ID'.$x]  ;//change the brand generic data think it's the item data???
+         $ITEMDATA = "UPDATE item SET I_DATA = 'G'  WHERE I_ID =".$array['OL_I_ID'.$x]  ;//change the brand generic data think it's the item data
          $UPDATEIDATA = mysqli_query($mysqli, $ITEMDATA );
          
       }
-      $OLAMOUNT = $array['OL_QUANTITY'.$x] * $price; //oderline total
+      $OLAMOUNT = $array['OL_QUANTITY'.$x] * $price; //orderline total
       $total = $total + $OLAMOUNT; //increase total variable for later 
       $ORDERLINESQL = "INSERT INTO ORDER_LINE 
       (OL_O_ID,OL_D_ID,OL_W_ID,OL_NUMBER,OL_I_ID,OL_SUPPLY_W_ID,OL_DELIVERY_D,OL_QUANTITY,OL_AMOUNT,OL_DIST_INFO)	
@@ -119,15 +119,16 @@ date_default_timezone_set('America/Chicago');
       $ORDDERLINE = mysqli_query($mysqli,$ORDERLINESQL ); //INSERT ORDERLINE INTO ORDER LINE TABLE
    }
 
-    //use this $D_NEXT_O_ID to show the order table query
-   $total = round($total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']),2);
-   $endtime =floor(microtime(true) * 1000);
-   $totaltime = round($endtime - $milliseconds,2);
+
+   $total = round($total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']),2); //end total with all tax and discount
+
 
    if($passed){//if passed commit
       $mysqli->commit();
       $mysqli -> autocommit(TRUE);
    }
+   $endtime =floor(microtime(true) * 1000); //time it took after  everything to query and commit
+   $totaltime = round($endtime - $milliseconds,2); // time it took total miliseconds
 ?>
 
 
@@ -175,19 +176,20 @@ date_default_timezone_set('America/Chicago');
 <?php
 if($passed){
 echo"<table border='1'>";
-//TEMP TABLE OF ALL COMBINED
+//TEMP TABLE OF ALL COMBINED attributes needed
 $temptable = "SELECT ORDER_LINE.OL_W_ID,ORDER_LINE.OL_I_ID,ITEM.I_NAME,ORDER_LINE.OL_QUANTITY,STOCK.S_QUANTITY,ITEM.I_DATA,ITEM.I_PRICE,ORDER_LINE.OL_AMOUNT 
 FROM((ORDER_LINE INNER JOIN ITEM ON ORDER_LINE.OL_I_ID = ITEM.I_ID) 
 INNER JOIN STOCK ON ORDER_LINE.OL_I_ID = STOCK.S_I_ID AND ORDER_LINE.OL_W_ID = STOCK.S_W_ID)
 WHERE ORDER_LINE.OL_O_ID = $D_NEXT_O_ID;";
 $table = mysqli_query($mysqli,$temptable);
+//display all order_lines of current transaction in html table
 echo"<tr><td>Supp_W</td><td>Item_id</td><td>Item_Name</td><td>qty</td><td>Stock</td><td>B/G</td><td>Price</td><td>Amount</td></tr>";
  while($row = mysqli_fetch_assoc($table)){
    echo"<tr><td>{$row['OL_W_ID']}</td><td>{$row['OL_I_ID']}</td><td>{$row['I_NAME']}</td><td>{$row['OL_QUANTITY']}</td><td>{$row['S_QUANTITY']}</td><td>{$row['I_DATA']}<td>{$row['I_PRICE']}</td><td>{$row['OL_AMOUNT']}</td></tr>";
  }
  echo"<tr><td>Execution status succesfull!</td><td>Total: $total</tr>";
  echo"</table>";
-}else{//if failed
+}else{//if failed we still show top just not bottom
    echo"<table border='1'>";
    echo"<tr><td>Execution status Failed Invalid Item ID entered!</td></tr>";
    echo"</table>";
