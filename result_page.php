@@ -23,25 +23,24 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
 
   $iPassed = true; //item id invalid?
   $wPassed = true; //warehouse passed
-
   //Query and results to use for the warehouse information
-  $warehouseSQL = "SELECT * FROM warehouse WHERE W_ID = $wID";
+  $warehouseSQL = "SELECT * FROM WAREHOUSE WHERE W_ID = $wID";
   $warehouseResult = mysqli_query($mysqli, $warehouseSQL);
+  echo("after warehouse query");
   $warehouseRow = mysqli_fetch_assoc($warehouseResult) or $ourw = false; //Validate warehouse ID exists
   if(!$ourw){
    goto end;
   }
 
   //Query and results to use for the district information
-  $districtSQL = "SELECT * FROM district WHERE D_ID = $dID";
+  $districtSQL = "SELECT * FROM DISTRICT WHERE D_ID = $dID";
   $districtResult = mysqli_query($mysqli, $districtSQL); 
   $districtRow = mysqli_fetch_assoc($districtResult) or $ourd = false;; //Validate district ID exists
   if(!$ourd){
    goto end;
   }
-
   //Query and results to use for the customer information
-  $customerSQL = "SELECT * FROM customer WHERE C_ID = $cID";
+  $customerSQL = "SELECT * FROM CUSTOMER WHERE C_ID = $cID";
   $customerResult = mysqli_query($mysqli, $customerSQL);
   $customerRow = mysqli_fetch_assoc($customerResult) or $ourc = false; //Validate customer ID exists
   if(!$ourc){
@@ -66,12 +65,10 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
   $D_NEXT_O_ID = $D_NEXT_O_ID['D_NEXT_O_ID']; //set variable to it since we use it multiple times
   $UPDATEQ = "UPDATE DISTRICT SET D_NEXT_O_ID = D_NEXT_O_ID  + 1 WHERE D_ID = $dID AND D_W_ID = $wID";//INCREASE THE NEXT ID
   $UPDATER = mysqli_query($mysqli,$UPDATEQ);
-
   // insert into orderr
   $ORDERRSQL = "INSERT INTO ORDERR (O_ID,O_D_ID,O_W_ID,O_C_ID,O_ENTRY_D,O_CARRIER_ID,O_OL_CNT,O_ALL_LOCAL)	
   VALUES ($D_NEXT_O_ID,$dID,$wID,$cID,CURDATE(),NULL,$rowcount,$local)";
   $ORDDERRR = mysqli_query($mysqli,$ORDERRSQL);
-
   //insert into new order
   $NEWORSQL = "INSERT INTO NEW_ORDER (NO_O_ID,NO_D_ID,NO_W_ID) VALUES($D_NEXT_O_ID,$dID,$wID)";
   $NEWORDERR = mysqli_query($mysqli,$NEWORSQL);
@@ -80,7 +77,6 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
   $array = $_POST;
   $rowcount = ((sizeof($array)) - 3) /3; // subtract for 3 above then divide by 3 because each row has 3 columns
   //go through all orderlines
-  if($ourw && $ourc && $ourd){ // if all those are valid do this
    for($x =1;$x<=$rowcount;$x++){
       $I_IDq = "SELECT * FROM ITEM WHERE I_ID =".$array['OL_I_ID'.$x]; ///get item from current id line
       $I_ID = mysqli_query($mysqli, $I_IDq );//using OL_ID
@@ -144,7 +140,6 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
       VALUES ($D_NEXT_O_ID,$dID,	$wID,$x,".$array['OL_I_ID'.$x].",".$array['OL_SUPPLY_W_ID'.$x].",NULL,".$array['OL_QUANTITY'.$x].",".$OLAMOUNT.","."'$stockdt'".")";
       $ORDDERLINE = mysqli_query($mysqli,$ORDERLINESQL ); //INSERT ORDERLINE INTO ORDER LINE TABLE
    }
-}
 
 
    $total = round($total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']),2); //end total with all tax and discount
