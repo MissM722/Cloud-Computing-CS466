@@ -22,7 +22,7 @@
     ?>
 
 
-    <form action="result_page.php" id="mainForm" method="post">
+    <form action="result_page.php" id="mainForm" method="post"> <!-- Header of the form including all identifiers -->
 
         <div id="info"> 
             <label> Warehouse Number:</label> 
@@ -36,7 +36,7 @@
         </div>
 
 
-        <div id="tableButtons">
+        <div id="tableButtons">  <!-- Table add and delete row buttons -->
             <input type="button" value="Add Row" onclick="addRow('tbl_id')" id="add"/>
 
             <input type="button" value="Delete Row" onclick="deleteRow('tbl_id')" id="delete"/>
@@ -46,13 +46,13 @@
 
             <table id="tbl_id">
                 <thead>
-                    <tr>
+                    <tr> <!-- Descriptions for top of the table -->
                         <th>ID</th>
                         <th>Warehouse Number</th>
                         <th>Quantity</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody> <!-- Inputs for all order information -->
                     <tr>
                         <td> <input type="number" name="OL_I_ID1" id="bottom_form" class="required hilightable" /> </td> 
                         <td> <input type="number" name="OL_SUPPLY_W_ID1" id="bottom_form" class="required hilightable" /> </td>
@@ -88,22 +88,13 @@
 
         </div>
 
-        <div id="submitButton">
+        <div id="submitButton"> <!-- Submits the data to the backend -->
 
          <input type="submit" value="Submit">
 
         </div>
 
     </form>
-
-
-
-
-    <?php
-
-    //close the connection
-    //$mysqli->close();
-    ?>
 
 </body>
 
