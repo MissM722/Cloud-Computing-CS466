@@ -8,7 +8,7 @@
  //Get the current date to use for the order information
  $tm = time(); //current date/time
  $milliseconds = floor(microtime(true) * 1000); // current time for a millisecond format
- $passed = true; //did anything fail?
+
  $total = 0.00; //total so far of cost
  $local = 0; // is the order local?
 date_default_timezone_set('America/Chicago'); //change to my timezone because I like seeing it better
@@ -17,20 +17,36 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
   $wID = $_POST['W_ID'];
   $cID = $_POST['C_ID'];
 
+  $ourw = true;// is the warehouse valid?
+  $ourd = true; //is the district valid
+  $ourc = true;  //is the customer valid
+
+  $iPassed = true; //item id invalid?
+  $wPassed = true; //warehouse passed
+
   //Query and results to use for the warehouse information
   $warehouseSQL = "SELECT * FROM warehouse WHERE W_ID = $wID";
   $warehouseResult = mysqli_query($mysqli, $warehouseSQL);
-  $warehouseRow = mysqli_fetch_assoc($warehouseResult) or die("Warehouse doesnt exist"); //Validate warehouse ID exists
+  $warehouseRow = mysqli_fetch_assoc($warehouseResult) or $ourw = false; //Validate warehouse ID exists
+  if(!$ourw){
+   goto end;
+  }
 
   //Query and results to use for the district information
   $districtSQL = "SELECT * FROM district WHERE D_ID = $dID";
   $districtResult = mysqli_query($mysqli, $districtSQL); 
-  $districtRow = mysqli_fetch_assoc($districtResult) or die("District doesnt exist"); //Validate district ID exists
+  $districtRow = mysqli_fetch_assoc($districtResult) or $ourd = false;; //Validate district ID exists
+  if(!$ourd){
+   goto end;
+  }
 
   //Query and results to use for the customer information
   $customerSQL = "SELECT * FROM customer WHERE C_ID = $cID";
   $customerResult = mysqli_query($mysqli, $customerSQL);
-  $customerRow = mysqli_fetch_assoc($customerResult) or die("Customer doesnt exist"); //Validate customer ID exists
+  $customerRow = mysqli_fetch_assoc($customerResult) or $ourc = false; //Validate customer ID exists
+  if(!$ourc){
+   goto end;
+  }
 
 
    $array = $_POST;
@@ -64,12 +80,13 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
   $array = $_POST;
   $rowcount = ((sizeof($array)) - 3) /3; // subtract for 3 above then divide by 3 because each row has 3 columns
   //go through all orderlines
+  if($ourw && $ourc && $ourd){ // if all those are valid do this
    for($x =1;$x<=$rowcount;$x++){
-      $I_IDq = "SELECT * FROM ITEM WHERE I_ID =".$array['OL_I_ID'.$x]; ///get next order number
+      $I_IDq = "SELECT * FROM ITEM WHERE I_ID =".$array['OL_I_ID'.$x]; ///get item from current id line
       $I_ID = mysqli_query($mysqli, $I_IDq );//using OL_ID
       $I_ROW = mysqli_fetch_assoc($I_ID);//GET THE ITEM ROW
       if($I_ID->num_rows ==0){ // if the item number isn't valid roll back all transactions done to database like nothing happened
-         $passed= false;
+         $iPassed= false;
          $mysqli->rollback();
          break;
          //rollback
@@ -77,6 +94,15 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
          $price = $I_ROW['I_PRICE']; //item price
          $name = $I_ROW['I_NAME']; //item name
          $data = $I_ROW['I_DATA']; //item data
+      }
+      $W_IDq = "SELECT * FROM WAREHOUSE WHERE W_ID =".$array['OL_SUPPLY_W_ID'.$x]; ///check current warehouse is valid
+      $W_ID = mysqli_query($mysqli, $W_IDq );//using OL_ID
+      $W_ROW = mysqli_fetch_assoc($W_ID);//GET THE ITEM ROW for warehouse 
+      if($W_ID->num_rows ==0){ // if the item number isn't valid roll back all transactions done to database like nothing happened
+         $wPassed= false;
+         $mysqli->rollback();
+         break;
+         //rollback
       }
       $S_IDq = "SELECT * FROM STOCK WHERE S_I_ID =".$array['OL_I_ID'.$x]." and S_W_ID = ".$array['OL_SUPPLY_W_ID'.$x]; ///checkl stock of that item in supply warehouse it has to exist because it passed item check already stock is full of items that exist
       $S_ID = mysqli_query($mysqli, $S_IDq );//using OL_ID
@@ -118,12 +144,12 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
       VALUES ($D_NEXT_O_ID,$dID,	$wID,$x,".$array['OL_I_ID'.$x].",".$array['OL_SUPPLY_W_ID'.$x].",NULL,".$array['OL_QUANTITY'.$x].",".$OLAMOUNT.","."'$stockdt'".")";
       $ORDDERLINE = mysqli_query($mysqli,$ORDERLINESQL ); //INSERT ORDERLINE INTO ORDER LINE TABLE
    }
+}
 
 
    $total = round($total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']),2); //end total with all tax and discount
 
-
-   if($passed){//if passed commit
+   if($iPassed && $ourw && $ourd && $ourc && $wPassed){//if passed commit
       $mysqli->commit();
       $mysqli -> autocommit(TRUE);
    }
@@ -174,7 +200,8 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
          </tbody>
       </table>
 <?php
-if($passed){
+end:
+if($iPassed && $ourw && $ourd && $ourc && $wPassed){ //check fail conditions
 echo"<table border='1'>";
 //TEMP TABLE OF ALL COMBINED attributes needed
 $temptable = "SELECT ORDER_LINE.OL_W_ID,ORDER_LINE.OL_I_ID,ITEM.I_NAME,ORDER_LINE.OL_QUANTITY,STOCK.S_QUANTITY,ITEM.I_DATA,ITEM.I_PRICE,ORDER_LINE.OL_AMOUNT 
@@ -189,13 +216,18 @@ echo"<tr><td>Supp_W</td><td>Item_id</td><td>Item_Name</td><td>qty</td><td>Stock<
  }
  echo"<tr><td>Execution status succesfull!</td><td>Total: $total</tr>";
  echo"</table>";
+
 }else{//if failed we still show top just not bottom
-   echo"<table border='1'>";
-   echo"<tr><td>Execution status Failed Invalid Item ID entered!</td></tr>";
-   echo"</table>";
+   
+      echo"<table border='1'>";
+      if(!$ourw){echo"<tr><td> Warehouse ID: Your warehouse isn't valid</td></tr>";}
+      if(!$ourd){echo"<tr><td> District ID: Your district id isn't valid </td></tr>";}
+      if(!$ourc){echo"<tr><td> Customer ID: Your customer id isn't valid </td></tr>";}
+      if(!$iPassed){echo"<tr><td> Row Item ID: ID in row invalid </td></tr><tr>";}
+      if(!$wPassed){echo"<td> Supply Warehouse ID:Supply warehouse isn't valid </td></tr>";}
+echo"</table>";
 }
 ?>
-
       <a href="index.php">Return to homepage</a>
          <p> <?php 
           
