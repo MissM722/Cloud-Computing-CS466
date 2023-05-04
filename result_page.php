@@ -26,7 +26,6 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
   //Query and results to use for the warehouse information
   $warehouseSQL = "SELECT * FROM WAREHOUSE WHERE W_ID = $wID";
   $warehouseResult = mysqli_query($mysqli, $warehouseSQL);
-  echo("after warehouse query");
   $warehouseRow = mysqli_fetch_assoc($warehouseResult) or $ourw = false; //Validate warehouse ID exists
   if(!$ourw){
    goto end;
@@ -77,6 +76,7 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
   $array = $_POST;
   $rowcount = ((sizeof($array)) - 3) /3; // subtract for 3 above then divide by 3 because each row has 3 columns
   //go through all orderlines
+  try{
    for($x =1;$x<=$rowcount;$x++){
       $I_IDq = "SELECT * FROM ITEM WHERE I_ID =".$array['OL_I_ID'.$x]; ///get item from current id line
       $I_ID = mysqli_query($mysqli, $I_IDq );//using OL_ID
@@ -126,10 +126,10 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
          $UPDATERoc = mysqli_query($mysqli,$STOCKUPDATEoc );
       }
       if(str_contains($data,"ORIGINAL") && str_contains($stockd,"ORIGINAL")){
-         $ITEMDATA = "UPDATE item SET I_DATA = 'B' WHERE I_ID =".$array['OL_I_ID'.$x] ;//change the brand generic data think it's the item data
+         $ITEMDATA = "UPDATE ITEM SET I_DATA = 'B' WHERE I_ID =".$array['OL_I_ID'.$x] ;//change the brand generic data think it's the item data
          $UPDATEIDATA = mysqli_query($mysqli, $ITEMDATA );
       }else{
-         $ITEMDATA = "UPDATE item SET I_DATA = 'G'  WHERE I_ID =".$array['OL_I_ID'.$x]  ;//change the brand generic data think it's the item data
+         $ITEMDATA = "UPDATE ITEM SET I_DATA = 'G'  WHERE I_ID =".$array['OL_I_ID'.$x]  ;//change the brand generic data think it's the item data
          $UPDATEIDATA = mysqli_query($mysqli, $ITEMDATA );
          
       }
@@ -140,6 +140,9 @@ date_default_timezone_set('America/Chicago'); //change to my timezone because I 
       VALUES ($D_NEXT_O_ID,$dID,	$wID,$x,".$array['OL_I_ID'.$x].",".$array['OL_SUPPLY_W_ID'.$x].",NULL,".$array['OL_QUANTITY'.$x].",".$OLAMOUNT.","."'$stockdt'".")";
       $ORDDERLINE = mysqli_query($mysqli,$ORDERLINESQL ); //INSERT ORDERLINE INTO ORDER LINE TABLE
    }
+}catch(Exception $e){
+   echo("exception: ". $e->getMessage());
+}
 
 
    $total = round($total *(1-$customerRow['C_DISCOUNT']) * (1+$warehouseRow['W_TAX'] +$districtRow['D_TAX']),2); //end total with all tax and discount
