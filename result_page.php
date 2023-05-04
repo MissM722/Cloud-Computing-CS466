@@ -180,7 +180,7 @@ echo"<table border='1'>";
 $temptable = "SELECT ORDER_LINE.OL_W_ID,ORDER_LINE.OL_I_ID,ITEM.I_NAME,ORDER_LINE.OL_QUANTITY,STOCK.S_QUANTITY,ITEM.I_DATA,ITEM.I_PRICE,ORDER_LINE.OL_AMOUNT 
 FROM((ORDER_LINE INNER JOIN ITEM ON ORDER_LINE.OL_I_ID = ITEM.I_ID) 
 INNER JOIN STOCK ON ORDER_LINE.OL_I_ID = STOCK.S_I_ID AND ORDER_LINE.OL_W_ID = STOCK.S_W_ID)
-WHERE ORDER_LINE.OL_O_ID = $D_NEXT_O_ID;";
+WHERE ORDER_LINE.OL_O_ID = $D_NEXT_O_ID AND ORDER_LINE.OL_D_ID = ". $dID." AND ORDER_LINE.OL_W_ID = $wID;";
 $table = mysqli_query($mysqli,$temptable);
 //display all order_lines of current transaction in html table
 echo"<tr><td>Supp_W</td><td>Item_id</td><td>Item_Name</td><td>qty</td><td>Stock</td><td>B/G</td><td>Price</td><td>Amount</td></tr>";
